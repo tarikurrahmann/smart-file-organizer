@@ -1,0 +1,3 @@
+PyQt6
+watchdog
+Send2Trash

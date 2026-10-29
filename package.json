@@ -1,0 +1,46 @@
+{
+  "name": "smart-file-organizer-desktop",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A glassmorphism desktop interface for organizing files by type.",
+  "main": "electron-app/main.js",
+  "scripts": {
+    "build:css": "tailwindcss -i ./electron-app/input.css -o ./electron-app/styles.css --minify",
+    "start": "npm run build:css && electron .",
+    "dev": "npm run build:css && electron .",
+    "pack": "npm run build:css && electron-builder --dir",
+    "dist": "npm run build:css && node scripts/build-distributables.js"
+  },
+  "devDependencies": {
+    "electron": "^45.1.0",
+    "electron-builder": "^26.18.0",
+    "tailwindcss": "^3.4.17"
+  },
+  "allowScripts": {
+    "electron@45.1.0": true
+  },
+  "build": {
+    "appId": "com.smartorganizer.app",
+    "productName": "Smart File Organizer",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "electron-app/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": [
+        "portable",
+        "zip",
+        "nsis"
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    }
+  }
+}

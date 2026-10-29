@@ -1,0 +1,589 @@
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#09090b" />
+    <meta
+      name="description"
+      content="A private, open-source desktop file organizer. Sort files, automate folders, find duplicates, and undo changes."
+    />
+    <title>Smart File Organizer — Put your files in their place</title>
+
+    <script>
+      document.documentElement.classList.add("js-motion");
+      tailwind = {
+        theme: {
+          extend: {
+            colors: {
+              ink: "#09090b",
+              mint: "#6ee7c2",
+              cyan: "#67d9ef"
+            },
+            fontFamily: {
+              sans: ["Inter", "Segoe UI", "sans-serif"],
+              mono: ["Cascadia Code", "Consolas", "monospace"]
+            }
+          }
+        }
+      };
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+      referrerpolicy="no-referrer"
+    />
+
+    <style>
+      :root {
+        color-scheme: dark;
+        background: #09090b;
+        font-family: Inter, "Segoe UI", sans-serif;
+        scroll-padding-top: 5rem;
+      }
+
+      body {
+        min-width: 320px;
+        overflow-x: clip;
+        background: #09090b;
+      }
+
+      ::selection {
+        background: rgba(110, 231, 194, 0.3);
+      }
+
+      .ambient {
+        filter: blur(105px);
+      }
+
+      .glass {
+        border: 1px solid rgba(148, 163, 184, 0.13);
+        background: linear-gradient(145deg, rgba(20, 30, 49, 0.76), rgba(13, 20, 35, 0.7));
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+      }
+
+      .grid-glow {
+        background-image:
+          linear-gradient(rgba(148, 163, 184, 0.03) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(148, 163, 184, 0.03) 1px, transparent 1px);
+        background-size: 48px 48px;
+        mask-image: linear-gradient(to bottom, black, transparent 90%);
+      }
+
+      .gradient-text {
+        background: linear-gradient(100deg, #6ee7c2, #67d9ef 54%, #c4b5fd);
+        background-clip: text;
+        color: transparent;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .button-primary {
+        border: 1px solid rgba(110, 231, 194, 0.6);
+        background: linear-gradient(110deg, #6ee7c2, #67d9ef);
+        box-shadow: 0 12px 38px rgba(45, 212, 191, 0.16);
+        color: #06221f;
+        transition: transform 160ms ease, box-shadow 160ms ease;
+      }
+
+      .button-primary:hover {
+        box-shadow: 0 16px 46px rgba(45, 212, 191, 0.28);
+        transform: translateY(-2px);
+      }
+
+      .button-primary:active {
+        transform: scale(0.98);
+      }
+
+      .button-secondary,
+      .button-outline {
+        border: 1px solid rgba(148, 163, 184, 0.17);
+        background: rgba(255, 255, 255, 0.03);
+        transition: border-color 160ms ease, background 160ms ease, transform 160ms ease;
+      }
+
+      .button-secondary:hover,
+      .button-outline:hover {
+        transform: translateY(-2px);
+        border-color: rgba(148, 163, 184, 0.33);
+        background: rgba(255, 255, 255, 0.07);
+      }
+
+      .bento-card {
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(148, 163, 184, 0.115);
+        background: linear-gradient(145deg, rgba(20, 30, 49, 0.64), rgba(13, 20, 35, 0.55));
+        transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+      }
+
+      .bento-card:hover {
+        transform: translateY(-3px);
+        border-color: rgba(110, 231, 194, 0.24);
+        background: linear-gradient(145deg, rgba(25, 38, 59, 0.78), rgba(15, 23, 40, 0.68));
+      }
+
+      .icon-tile {
+        display: grid;
+        height: 42px;
+        width: 42px;
+        flex: 0 0 auto;
+        place-items: center;
+        border: 1px solid rgba(110, 231, 194, 0.14);
+        border-radius: 13px;
+        background: rgba(110, 231, 194, 0.07);
+        color: #a7f3d0;
+      }
+
+      .reveal {
+        opacity: 1;
+        transform: none;
+      }
+
+      .js-motion .reveal {
+        opacity: 0;
+        transform: translateY(18px);
+        transition: opacity 650ms ease, transform 650ms cubic-bezier(0.2, 0.7, 0.2, 1);
+      }
+
+      .js-motion .reveal.is-visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .tree-line {
+        opacity: 0;
+        animation: tree-line-in 500ms ease-out forwards;
+      }
+
+      .tree-line:nth-child(2) { animation-delay: 250ms; }
+      .tree-line:nth-child(3) { animation-delay: 450ms; }
+      .tree-line:nth-child(4) { animation-delay: 650ms; }
+
+      .status-pulse {
+        animation: status-pulse 2s ease-out infinite;
+      }
+
+      .preview-window {
+        animation: preview-arrive 850ms 120ms ease-out both;
+      }
+
+      .preview-float {
+        animation: preview-float 8s 1s ease-in-out infinite;
+      }
+
+      .scan-line {
+        animation: scan-progress 2.8s ease-in-out infinite;
+      }
+
+      .date-dot {
+        animation: date-pulse 2.8s ease-in-out infinite;
+      }
+
+      @keyframes tree-line-in {
+        from { opacity: 0; transform: translateX(-6px); }
+        to { opacity: 1; transform: translateX(0); }
+      }
+
+      @keyframes status-pulse {
+        0% { box-shadow: 0 0 0 0 rgba(110, 231, 194, 0.32); }
+        70%, 100% { box-shadow: 0 0 0 7px rgba(110, 231, 194, 0); }
+      }
+
+      @keyframes preview-arrive {
+        from { opacity: 0; transform: translateY(20px) scale(0.99); }
+        to { opacity: 1; transform: translateY(0) scale(1); }
+      }
+
+      @keyframes preview-float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-5px); }
+      }
+
+      @keyframes scan-progress {
+        0% { transform: translateX(-110%); }
+        100% { transform: translateX(330%); }
+      }
+
+      @keyframes date-pulse {
+        0%, 100% { box-shadow: 0 0 0 0 rgba(196, 181, 253, 0.2); }
+        50% { box-shadow: 0 0 0 5px rgba(196, 181, 253, 0); }
+      }
+
+      a:focus-visible {
+        outline: 2px solid rgba(110, 231, 194, 0.9);
+        outline-offset: 4px;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          scroll-behavior: auto !important;
+          animation: none !important;
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+        }
+
+        .js-motion .reveal {
+          opacity: 1;
+          transform: none;
+        }
+      }
+    </style>
+  </head>
+
+  <body class="text-slate-100 antialiased">
+    <div aria-hidden="true" class="pointer-events-none fixed inset-0 overflow-hidden">
+      <div class="ambient absolute -left-48 -top-56 h-[36rem] w-[36rem] rounded-full bg-violet-600/[0.12]"></div>
+      <div class="ambient absolute -right-36 top-20 h-[30rem] w-[30rem] rounded-full bg-cyan-500/[0.09]"></div>
+      <div class="ambient absolute bottom-0 left-1/3 h-80 w-[34rem] rounded-full bg-emerald-500/[0.07]"></div>
+    </div>
+    <div aria-hidden="true" class="grid-glow pointer-events-none absolute inset-x-0 top-0 h-[760px] opacity-60"></div>
+
+    <div class="relative">
+      <header class="mx-auto flex max-w-7xl flex-wrap items-center justify-between border-b border-white/[0.07] px-5 py-4 sm:px-8 lg:px-12">
+        <a class="flex items-center gap-3" href="/" aria-label="Smart File Organizer home">
+          <span class="grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br from-emerald-300 to-cyan-500 text-slate-950 shadow-lg shadow-emerald-500/20">
+            <i class="fa-solid fa-folder-tree text-lg" aria-hidden="true"></i>
+          </span>
+          <span>
+            <span class="block text-sm font-semibold tracking-wide text-white">SMART SORT</span>
+            <span class="block text-[10px] tracking-[0.18em] text-slate-500">FILE ORGANIZER</span>
+          </span>
+        </a>
+
+        <nav class="hidden items-center gap-8 text-sm text-slate-400 md:flex" aria-label="Main navigation">
+          <a class="transition hover:text-white" href="/">Overview</a>
+          <a class="transition hover:text-white" href="/install/">Install</a>
+          <a class="transition hover:text-white" href="/integrations/">Integrations</a>
+          <a class="transition hover:text-white" href="/enterprise/">Enterprise</a>
+          <a class="transition hover:text-white" href="/blog/">Blog</a>
+        </nav>
+
+        <a class="button-secondary ml-auto inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-semibold text-slate-200 md:ml-0" href="https://github.com/tarikurrahmann/smart-file-organizer" target="_blank" rel="noopener noreferrer">
+          <i class="fa-brands fa-github text-sm" aria-hidden="true"></i>
+          GitHub
+        </a>
+        <nav class="order-3 flex w-full gap-5 overflow-x-auto border-t border-white/[0.06] pt-3 text-xs text-slate-400 md:hidden" aria-label="Mobile main navigation">
+          <a class="shrink-0 transition hover:text-white" href="/">Overview</a>
+          <a class="shrink-0 transition hover:text-white" href="/install/">Install</a>
+          <a class="shrink-0 transition hover:text-white" href="/integrations/">Integrations</a>
+          <a class="shrink-0 transition hover:text-white" href="/enterprise/">Enterprise</a>
+          <a class="shrink-0 transition hover:text-white" href="/blog/">Blog</a>
+        </nav>
+      </header>
+
+      <main id="top">
+        <section class="mx-auto max-w-7xl px-5 pb-16 pt-14 sm:px-8 sm:pt-20 lg:px-12 lg:pb-20 lg:pt-24">
+          <div class="reveal mx-auto max-w-4xl text-center">
+            <div class="mb-7 inline-flex items-center gap-2 rounded-full border border-emerald-300/15 bg-emerald-300/[0.05] px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.15em] text-emerald-100">
+              <span class="status-pulse h-1.5 w-1.5 rounded-full bg-emerald-300"></span>
+              Open Source &amp; Privacy-First Desktop App
+            </div>
+
+            <div class="mb-6 flex items-center justify-center gap-4" aria-hidden="true">
+              <span class="grid h-12 w-12 place-items-center rounded-2xl border border-emerald-300/15 bg-emerald-300/[0.06] text-emerald-200 shadow-[0_0_38px_rgba(110,231,194,0.1)]">
+                <i class="fa-solid fa-folder-open text-xl"></i>
+              </span>
+              <pre class="text-left font-mono text-[10px] leading-5 text-slate-500"><span class="tree-line block">Downloads/</span><span class="tree-line block">|-- .jpg  <span class="text-emerald-300">-&gt; Images/</span></span><span class="tree-line block">|-- .pdf  <span class="text-cyan-300">-&gt; Documents/</span></span><span class="tree-line block">`-- .zip  <span class="text-violet-300">-&gt; Archives/</span></span></pre>
+            </div>
+
+            <h1 class="mx-auto max-w-5xl text-5xl font-semibold leading-[1.03] tracking-[-0.05em] text-white sm:text-6xl lg:text-[5.2rem]">
+              Your files have<br class="hidden sm:block" />
+              <span class="gradient-text">a place to land.</span>
+            </h1>
+            <p class="mx-auto mt-6 max-w-2xl text-base leading-7 text-slate-400 sm:text-lg sm:leading-8">
+              Sort the clutter. Automate the busywork. Get your time back.<br class="hidden sm:block" />
+              A fast, private organizer that stays on your computer.
+            </p>
+
+            <div id="download" class="mt-8 flex flex-col justify-center gap-3 sm:flex-row sm:items-center">
+              <a class="button-primary inline-flex min-h-12 items-center justify-center gap-2.5 rounded-xl px-6 text-sm font-bold" href="../dist/Smart%20File%20Organizer%201.0.0.exe" download>
+                <i class="fa-solid fa-download" aria-hidden="true"></i>
+                Download Portable (.exe)
+              </a>
+              <a class="button-secondary inline-flex min-h-12 items-center justify-center gap-2 rounded-xl px-5 text-sm font-semibold text-slate-200" href="../dist/Smart%20File%20Organizer-1.0.0-win.zip" download>
+                <i class="fa-regular fa-file-zipper text-emerald-200" aria-hidden="true"></i>
+                Download ZIP
+              </a>
+              <a class="button-outline inline-flex min-h-12 items-center justify-center gap-2 rounded-xl px-5 text-sm font-semibold text-slate-200" href="https://github.com/tarikurrahmann/smart-file-organizer" target="_blank" rel="noopener noreferrer">
+                <i class="fa-brands fa-github" aria-hidden="true"></i>
+                View on GitHub
+              </a>
+            </div>
+            <p class="mt-4 text-[11px] leading-5 text-slate-500">Windows x64 <span class="px-1 text-slate-700">·</span> Version 1.0.0 <span class="px-1 text-slate-700">·</span> Portable needs no install</p>
+            <p class="mx-auto mt-2 max-w-xl text-[11px] leading-5 text-slate-600">The app is currently unsigned. Windows Smart App Control may show a security warning when you run it.</p>
+          </div>
+        </section>
+
+        <section aria-label="Application preview" class="mx-auto max-w-7xl px-5 pb-20 sm:px-8 lg:px-12 lg:pb-24">
+          <div class="preview-float reveal mx-auto max-w-6xl">
+            <div class="relative">
+              <div aria-hidden="true" class="absolute -inset-x-2 -inset-y-6 rounded-[42px] bg-gradient-to-br from-emerald-400/[0.08] via-cyan-500/[0.05] to-violet-500/[0.07] blur-3xl"></div>
+              <div class="preview-window glass relative overflow-hidden rounded-[24px] p-2.5 shadow-[0_35px_110px_rgba(0,0,0,0.5)] sm:rounded-[30px] sm:p-3">
+                <div class="overflow-hidden rounded-[18px] border border-white/[0.07] bg-[#080d19] sm:rounded-[23px]">
+                  <div class="flex h-11 items-center justify-between border-b border-white/[0.07] bg-white/[0.025] px-4 sm:px-5">
+                    <div class="flex items-center gap-2" aria-hidden="true">
+                      <span class="h-2 w-2 rounded-full bg-rose-400/80"></span>
+                      <span class="h-2 w-2 rounded-full bg-amber-300/80"></span>
+                      <span class="h-2 w-2 rounded-full bg-emerald-300/80"></span>
+                    </div>
+                    <span class="text-[10px] font-medium tracking-wide text-slate-500">SMART FILE ORGANIZER</span>
+                    <span class="h-4 w-12"></span>
+                  </div>
+
+                  <div class="grid min-h-[350px] sm:min-h-[410px] sm:grid-cols-[158px_1fr]">
+                    <aside class="hidden border-r border-white/[0.06] bg-white/[0.015] p-4 sm:block" aria-hidden="true">
+                      <div class="mb-7 flex items-center gap-2">
+                        <span class="grid h-7 w-7 place-items-center rounded-lg bg-gradient-to-br from-emerald-300 to-cyan-500 text-[11px] font-bold text-slate-950">S</span>
+                        <span class="text-[9px] font-semibold tracking-wider text-slate-300">SMART SORT</span>
+                      </div>
+                      <p class="mb-2 px-2 text-[8px] uppercase tracking-[0.18em] text-slate-600">Workspace</p>
+                      <div class="mb-1 flex items-center gap-2 rounded-lg border border-emerald-300/10 bg-emerald-300/[0.07] px-2 py-2 text-[10px] text-emerald-100"><i class="fa-solid fa-house text-[9px]"></i> Overview</div>
+                      <div class="flex items-center gap-2 px-2 py-2 text-[10px] text-slate-500"><i class="fa-regular fa-clock text-[9px]"></i> Activity log</div>
+                      <div class="flex items-center gap-2 px-2 py-2 text-[10px] text-slate-500"><i class="fa-solid fa-sliders text-[9px]"></i> Custom rules</div>
+                      <p class="mb-2 mt-6 px-2 text-[8px] uppercase tracking-[0.18em] text-slate-600">Tools</p>
+                      <div class="flex items-center gap-2 px-2 py-2 text-[10px] text-slate-500"><i class="fa-solid fa-wand-magic-sparkles text-[9px]"></i> Duplicate cleaner</div>
+                      <div class="flex items-center gap-2 px-2 py-2 text-[10px] text-slate-500"><i class="fa-solid fa-lock text-[9px]"></i> Private vault</div>
+                      <div class="mt-10 rounded-lg border border-white/[0.06] bg-white/[0.025] p-2.5">
+                        <div class="mb-1 flex items-center gap-1.5 text-[9px] text-emerald-100"><span class="status-pulse h-1.5 w-1.5 rounded-full bg-emerald-300"></span> Files stay local</div>
+                        <p class="text-[8px] leading-4 text-slate-600">Nothing is uploaded.</p>
+                      </div>
+                    </aside>
+
+                    <div class="min-w-0 p-4 sm:p-6">
+                      <div class="mb-5 flex items-center justify-between gap-2">
+                        <div>
+                          <p class="mb-1 text-[8px] font-semibold tracking-[0.18em] text-emerald-200/70">YOUR FILES, IN ORDER</p>
+                          <h2 class="text-base font-semibold tracking-tight text-white sm:text-lg">Smart <span class="bg-gradient-to-r from-emerald-300 to-cyan-300 bg-clip-text text-transparent">File Organizer</span></h2>
+                        </div>
+                        <span class="inline-flex items-center gap-1.5 rounded-full border border-emerald-300/10 bg-emerald-300/[0.05] px-2 py-1 text-[8px] text-emerald-100"><span class="status-pulse h-1.5 w-1.5 rounded-full bg-emerald-300"></span> Ready</span>
+                      </div>
+
+                      <div class="glass relative overflow-hidden rounded-2xl p-4 sm:p-5">
+                        <div aria-hidden="true" class="absolute -right-12 -top-16 h-40 w-40 rounded-full bg-emerald-400/[0.08] blur-3xl"></div>
+                        <div class="relative grid gap-5 md:grid-cols-[1fr_0.85fr] md:items-center">
+                          <div>
+                            <span class="inline-flex rounded-full border border-white/[0.07] bg-white/[0.035] px-2 py-1 text-[8px] text-slate-400"><i class="fa-solid fa-sparkles mr-1 text-emerald-300"></i> A calmer way to manage files</span>
+                            <h3 class="mt-3 text-xl font-semibold leading-tight text-white">Less clutter.<br /><span class="text-slate-400">More room to think.</span></h3>
+                            <p class="mt-2 max-w-[230px] text-[9px] leading-4 text-slate-500">Sort downloads and documents into clean folders in seconds.</p>
+                            <div class="mt-4 flex gap-2">
+                              <span class="rounded-lg border border-white/10 bg-white/[0.04] px-2.5 py-2 text-[8px] font-medium text-slate-300">Select folder</span>
+                              <span class="rounded-lg bg-gradient-to-r from-emerald-300 to-cyan-300 px-2.5 py-2 text-[8px] font-bold text-slate-950">Organize now <i class="fa-solid fa-arrow-right ml-1"></i></span>
+                            </div>
+                          </div>
+                          <div class="flex min-h-[138px] flex-col items-center justify-center rounded-xl border border-dashed border-slate-600/60 bg-slate-950/30 p-4 text-center">
+                            <span class="mb-2 grid h-9 w-9 place-items-center rounded-xl border border-emerald-300/15 bg-emerald-300/[0.07] text-emerald-200"><i class="fa-solid fa-arrow-up-from-bracket"></i></span>
+                            <span class="text-[9px] font-semibold text-slate-200">Drop files to organize instantly</span>
+                            <span class="mt-1 text-[8px] text-slate-600">PDF · Images · Audio · Archives</span>
+                          </div>
+                        </div>
+                        <div class="relative mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-white/[0.06] pt-3">
+                          <span class="truncate text-[8px] text-slate-600"><i class="fa-regular fa-folder mr-1"></i> Working folder / Downloads</span>
+                          <span class="text-[8px] text-slate-500">Change</span>
+                        </div>
+                      </div>
+
+                      <div class="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
+                        <div class="rounded-xl border border-white/[0.06] bg-white/[0.025] p-3"><i class="fa-solid fa-broom text-[10px] text-emerald-200"></i><p class="mt-1 text-[8px] font-semibold text-slate-200">Clean duplicates</p><p class="mt-1 text-[7px] text-slate-600">Find extra copies</p></div>
+                        <div class="rounded-xl border border-white/[0.06] bg-white/[0.025] p-3"><i class="fa-solid fa-tower-broadcast text-[10px] text-cyan-200"></i><p class="mt-1 text-[8px] font-semibold text-slate-200">Live watcher</p><p class="mt-1 text-[7px] text-slate-600">Sort as files arrive</p></div>
+                        <div class="rounded-xl border border-white/[0.06] bg-white/[0.025] p-3"><i class="fa-solid fa-sliders text-[10px] text-violet-200"></i><p class="mt-1 text-[8px] font-semibold text-slate-200">Custom rules</p><p class="mt-1 text-[7px] text-slate-600">Your categories</p></div>
+                        <div class="rounded-xl border border-white/[0.06] bg-white/[0.025] p-3"><i class="fa-solid fa-clock-rotate-left text-[10px] text-amber-200"></i><p class="mt-1 text-[8px] font-semibold text-slate-200">Activity &amp; undo</p><p class="mt-1 text-[7px] text-slate-600">Review, then revert</p></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <span class="absolute -right-2 top-20 hidden items-center gap-2 rounded-xl border border-emerald-300/15 bg-slate-950/90 px-3 py-2 text-[10px] font-medium text-emerald-100 shadow-xl sm:inline-flex lg:-right-8">
+                <span class="status-pulse h-1.5 w-1.5 rounded-full bg-emerald-300"></span> Live Watcher Active
+              </span>
+              <span class="absolute -left-2 bottom-28 hidden items-center gap-2 rounded-xl border border-violet-300/15 bg-slate-950/90 px-3 py-2 text-[10px] font-medium text-violet-100 shadow-xl sm:inline-flex lg:-left-8">
+                <i class="fa-solid fa-copy text-violet-300"></i> Duplicate Found
+              </span>
+              <span class="absolute -right-2 bottom-14 hidden items-center gap-2 rounded-xl border border-cyan-300/15 bg-slate-950/90 px-3 py-2 text-[10px] font-medium text-cyan-100 shadow-xl sm:inline-flex lg:-right-8">
+                <i class="fa-solid fa-check text-cyan-300"></i> Sorted 120 Files
+              </span>
+            </div>
+            <p class="mt-4 text-center text-xs text-slate-500">A glimpse of the desktop app <span class="text-slate-700">·</span> Nothing uploaded</p>
+          </div>
+        </section>
+
+        <section id="features" class="border-y border-white/[0.06] bg-white/[0.015]">
+          <div class="mx-auto max-w-7xl px-5 py-20 sm:px-8 lg:px-12 lg:py-24">
+            <div class="reveal mx-auto max-w-2xl text-center">
+              <p class="text-[10px] font-semibold uppercase tracking-[0.22em] text-emerald-200/75">A calmer workflow</p>
+              <h2 class="mt-4 text-3xl font-semibold tracking-tight text-white sm:text-4xl">A place for every file.</h2>
+              <p class="mt-4 text-sm leading-6 text-slate-400">Six focused tools for bringing order to your everyday folders.</p>
+            </div>
+
+            <div class="mt-12 grid auto-rows-fr gap-4 md:grid-cols-6">
+              <article class="bento-card reveal group rounded-3xl p-6 sm:p-8 md:col-span-4">
+                <div aria-hidden="true" class="absolute -right-24 -top-28 h-72 w-72 rounded-full bg-emerald-400/[0.07] blur-3xl transition group-hover:bg-emerald-400/[0.12]"></div>
+                <div class="relative grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:items-end">
+                  <div>
+                    <span class="icon-tile"><i class="fa-solid fa-folder-tree text-lg"></i></span>
+                    <p class="mt-6 text-[10px] font-semibold uppercase tracking-[0.18em] text-emerald-200/70">Sort with intent</p>
+                    <h3 class="mt-2 text-2xl font-semibold tracking-tight text-white">One-click file sorting</h3>
+                    <p class="mt-3 max-w-md text-sm leading-6 text-slate-400">Group common file types into Images, Documents, Videos, Audio, Archives, Code, and more. Drag in files or choose a folder to organize.</p>
+                  </div>
+                  <div class="rounded-2xl border border-white/[0.07] bg-slate-950/60 p-4 font-mono text-[11px] leading-7 text-slate-500">
+                    <div class="mb-3 flex items-center justify-between border-b border-white/[0.06] pb-3 text-[9px] uppercase tracking-[0.15em] text-slate-600"><span>Downloads</span><span>3 files sorted</span></div>
+                    <p><i class="fa-regular fa-image mr-2 text-emerald-300"></i> landscape.jpg <span class="float-right text-emerald-200">Images/</span></p>
+                    <p><i class="fa-regular fa-file-pdf mr-2 text-cyan-300"></i> notes.pdf <span class="float-right text-cyan-200">Documents/</span></p>
+                    <p><i class="fa-regular fa-file-zipper mr-2 text-violet-300"></i> assets.zip <span class="float-right text-violet-200">Archives/</span></p>
+                  </div>
+                </div>
+              </article>
+
+              <article class="bento-card reveal rounded-3xl p-6 md:col-span-2">
+                <div class="flex items-start justify-between gap-3">
+                  <span class="icon-tile border-cyan-300/15 bg-cyan-300/[0.07] text-cyan-200"><i class="fa-solid fa-tower-broadcast"></i></span>
+                  <span class="inline-flex items-center gap-2 rounded-full border border-emerald-300/10 bg-emerald-300/[0.05] px-2.5 py-1 text-[9px] font-medium text-emerald-100"><span class="status-pulse h-1.5 w-1.5 rounded-full bg-emerald-300"></span> WATCHING</span>
+                </div>
+                <h3 class="mt-6 text-lg font-semibold text-white">Real-time background watcher</h3>
+                <p class="mt-2 text-sm leading-6 text-slate-400">New files are sorted after they finish downloading or saving, while the app is running.</p>
+                <div class="mt-5 flex items-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.025] px-3 py-2.5 text-[10px] text-slate-500"><i class="fa-regular fa-folder text-cyan-200"></i><span class="truncate">Watching /Downloads</span><i class="fa-solid fa-ellipsis ml-auto"></i></div>
+              </article>
+
+              <article class="bento-card reveal rounded-3xl p-6 md:col-span-2">
+                <span class="icon-tile border-violet-300/15 bg-violet-300/[0.07] text-violet-200"><i class="fa-solid fa-fingerprint"></i></span>
+                <h3 class="mt-5 text-lg font-semibold text-white">SHA-256 duplicate cleaner</h3>
+                <p class="mt-2 text-sm leading-6 text-slate-400">Compare content hashes for same-size files to identify exact duplicate copies, plus likely temporary junk.</p>
+                <div class="mt-5 overflow-hidden rounded-full bg-white/[0.06]">
+                  <div class="scan-line h-1 w-1/3 rounded-full bg-gradient-to-r from-violet-300 to-cyan-300"></div>
+                </div>
+                <p class="mt-2 text-[10px] text-slate-600"><i class="fa-solid fa-shield-halved mr-1 text-violet-300"></i> Review candidates before sending to Trash</p>
+              </article>
+
+              <article class="bento-card reveal rounded-3xl p-6 md:col-span-2">
+                <span class="icon-tile border-amber-300/15 bg-amber-300/[0.07] text-amber-200"><i class="fa-regular fa-calendar-days"></i></span>
+                <h3 class="mt-5 text-lg font-semibold text-white">Dated image auto-sort</h3>
+                <p class="mt-2 text-sm leading-6 text-slate-400">Keep incoming images together in a year and date-based folder structure.</p>
+                <div class="mt-5 space-y-2 font-mono text-[10px]">
+                  <p class="text-slate-500"><i class="fa-regular fa-folder mr-2 text-amber-200"></i>Screenshots_2026</p>
+                  <p class="pl-5 text-slate-600"><i class="fa-regular fa-folder mr-2 text-amber-200/70"></i>2026-10-29</p>
+                  <p class="pl-10 text-emerald-200"><i class="fa-regular fa-image mr-2"></i>image_001.png</p>
+                </div>
+              </article>
+
+              <article class="bento-card reveal rounded-3xl p-6 md:col-span-2">
+                <span class="icon-tile border-sky-300/15 bg-sky-300/[0.07] text-sky-200"><i class="fa-solid fa-lock"></i></span>
+                <h3 class="mt-5 text-lg font-semibold text-white">Private vault</h3>
+                <p class="mt-2 text-sm leading-6 text-slate-400">Tuck away selected files and folders inside <code class="rounded bg-white/[0.06] px-1.5 py-0.5 text-sky-200">.private_vault</code>, then restore them later.</p>
+                <p class="mt-4 text-[10px] leading-5 text-slate-600"><i class="fa-solid fa-circle-info mr-1 text-sky-300"></i> Hides and relocates items; it does not encrypt or password-protect them.</p>
+              </article>
+
+              <article class="bento-card reveal rounded-3xl p-6 md:col-span-2">
+                <span class="icon-tile border-rose-300/15 bg-rose-300/[0.07] text-rose-200"><i class="fa-solid fa-clock-rotate-left"></i></span>
+                <h3 class="mt-5 text-lg font-semibold text-white">Instant activity &amp; undo</h3>
+                <p class="mt-2 text-sm leading-6 text-slate-400">Check recent changes, view category totals, and reverse the latest organization action.</p>
+                <div class="mt-5 flex items-center justify-between gap-3 rounded-xl border border-white/[0.06] bg-white/[0.025] p-3">
+                  <span class="text-[10px] text-slate-500"><i class="fa-solid fa-check mr-1.5 text-emerald-300"></i> 120 files organized</span>
+                  <span class="rounded-lg border border-white/10 px-2.5 py-1.5 text-[9px] font-medium text-slate-300"><i class="fa-solid fa-rotate-left mr-1"></i> Undo</span>
+                </div>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <section id="architecture" class="mx-auto max-w-7xl px-5 py-20 sm:px-8 lg:px-12 lg:py-24">
+          <div class="reveal mx-auto max-w-2xl text-center">
+            <p class="text-[10px] font-semibold uppercase tracking-[0.22em] text-cyan-200/75">One mission, two implementations</p>
+            <h2 class="mt-4 text-3xl font-semibold tracking-tight text-white sm:text-4xl">Choose your desktop stack.</h2>
+            <p class="mt-4 text-sm leading-6 text-slate-400">These are standalone applications with their own UI and file-operation code. Electron does not invoke the Python app.</p>
+          </div>
+
+          <div class="mt-10 grid gap-4 md:grid-cols-2">
+            <article class="glass reveal rounded-3xl p-6 sm:p-8">
+              <div class="flex items-center gap-3">
+                <span class="grid h-12 w-12 place-items-center rounded-2xl border border-cyan-300/15 bg-cyan-300/[0.07] text-cyan-200"><i class="fa-brands fa-js text-xl"></i></span>
+                <div>
+                  <p class="text-[10px] font-semibold uppercase tracking-[0.16em] text-cyan-200">Desktop UI</p>
+                  <h3 class="mt-1 text-lg font-semibold text-white">Electron.js + Tailwind CSS</h3>
+                </div>
+              </div>
+              <p class="mt-5 text-sm leading-6 text-slate-400">An HTML desktop interface styled with Tailwind. JavaScript in Electron's main process performs file operations through a restricted preload bridge.</p>
+              <div class="mt-6 flex items-center gap-2 text-[10px] text-slate-500"><i class="fa-solid fa-window-maximize text-cyan-200"></i> Electron shell <span class="text-slate-700">/</span> <i class="fa-brands fa-js text-amber-200"></i> JavaScript services <span class="text-slate-700">/</span> <i class="fa-solid fa-wind text-cyan-200"></i> Tailwind UI</div>
+            </article>
+            <article class="glass reveal rounded-3xl p-6 sm:p-8">
+              <div class="flex items-center gap-3">
+                <span class="grid h-12 w-12 place-items-center rounded-2xl border border-emerald-300/15 bg-emerald-300/[0.07] text-emerald-200"><i class="fa-brands fa-python text-xl"></i></span>
+                <div>
+                  <p class="text-[10px] font-semibold uppercase tracking-[0.16em] text-emerald-200">Standalone core</p>
+                  <h3 class="mt-1 text-lg font-semibold text-white">Python + PyQt6</h3>
+                </div>
+              </div>
+              <p class="mt-5 text-sm leading-6 text-slate-400">A separate Python desktop application with its own PyQt6 interface, organizer logic, local activity history, cleanup, and watcher services.</p>
+              <div class="mt-6 flex items-center gap-2 text-[10px] text-slate-500"><i class="fa-brands fa-python text-emerald-200"></i> Python runtime <span class="text-slate-700">/</span> <i class="fa-solid fa-window-maximize text-emerald-200"></i> PyQt6 GUI <span class="text-slate-700">/</span> <i class="fa-solid fa-eye text-emerald-200"></i> Watchdog</div>
+            </article>
+          </div>
+        </section>
+
+        <section class="px-5 pb-20 sm:px-8 lg:px-12 lg:pb-24">
+          <div class="glass reveal mx-auto flex max-w-7xl flex-col items-start justify-between gap-8 rounded-[28px] p-7 sm:p-10 md:flex-row md:items-center">
+            <div class="max-w-xl">
+              <div class="mb-3 inline-flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-emerald-200/75"><i class="fa-brands fa-windows"></i> Available for Windows x64</div>
+              <h2 class="text-2xl font-semibold tracking-tight text-white sm:text-3xl">Less clutter starts here.</h2>
+              <p class="mt-3 text-sm leading-6 text-slate-400">Try the portable build or download the ZIP—no installer wizard required.</p>
+            </div>
+            <div class="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
+              <a class="button-primary inline-flex min-h-12 items-center justify-center gap-2 rounded-xl px-5 text-sm font-bold" href="../dist/Smart%20File%20Organizer%201.0.0.exe" download><i class="fa-solid fa-download"></i> Portable (.exe)</a>
+              <a class="button-secondary inline-flex min-h-12 items-center justify-center gap-2 rounded-xl px-5 text-sm font-semibold text-slate-200" href="../dist/Smart%20File%20Organizer-1.0.0-win.zip" download><i class="fa-regular fa-file-zipper text-emerald-200"></i> Download ZIP</a>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="border-t border-white/[0.06]">
+        <div class="mx-auto flex max-w-7xl flex-col gap-6 px-5 py-8 text-[11px] text-slate-500 sm:px-8 lg:flex-row lg:items-center lg:justify-between lg:px-12">
+          <div>
+            <a class="inline-flex items-center gap-2 font-semibold text-slate-200 transition hover:text-white" href="https://github.com/tarikurrahmann/smart-file-organizer" target="_blank" rel="noopener noreferrer">
+              <i class="fa-brands fa-github text-base"></i> Smart File Organizer
+            </a>
+            <p class="mt-1.5">Open-source software <span class="px-1 text-slate-700">·</span> Files stay on your device</p>
+          </div>
+          <div class="flex flex-wrap items-center gap-x-5 gap-y-2">
+            <a class="transition hover:text-emerald-200" href="/install/">Install</a>
+            <a class="transition hover:text-emerald-200" href="/integrations/">Integrations</a>
+            <a class="transition hover:text-emerald-200" href="/enterprise/">Enterprise</a>
+            <a class="transition hover:text-emerald-200" href="/blog/">Blog</a>
+            <a class="transition hover:text-emerald-200" href="https://github.com/tarikurrahmann/smart-file-organizer" target="_blank" rel="noopener noreferrer">GitHub repository</a>
+            <a class="transition hover:text-emerald-200" href="../LICENSE">MIT license</a>
+            <a class="transition hover:text-emerald-200" href="https://yourtarikur.vercel.app/" target="_blank" rel="noopener noreferrer">Built by Tarikur Rahman</a>
+          </div>
+          <p>© 2026 Tarikur Rahman</p>
+        </div>
+      </footer>
+    </div>
+
+    <script>
+      const revealItems = document.querySelectorAll(".reveal");
+      const motionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+      if ("IntersectionObserver" in window && !motionPreference.matches) {
+        const observer = new IntersectionObserver(
+          (entries, currentObserver) => {
+            for (const entry of entries) {
+              if (entry.isIntersecting) {
+                entry.target.classList.add("is-visible");
+                currentObserver.unobserve(entry.target);
+              }
+            }
+          },
+          { threshold: 0.12, rootMargin: "0px 0px -24px 0px" }
+        );
+
+        revealItems.forEach((item, index) => {
+          item.style.transitionDelay = `${Math.min(index % 6, 5) * 65}ms`;
+          observer.observe(item);
+        });
+      } else {
+        revealItems.forEach((item) => item.classList.add("is-visible"));
+      }
+    </script>
+  </body>
+</html>

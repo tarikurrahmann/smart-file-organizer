@@ -1,0 +1,5 @@
+node_modules/
+electron-app/styles.css
+dist/
+__pycache__/
+*.py[cod]

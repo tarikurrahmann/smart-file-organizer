@@ -1,0 +1,15 @@
+{
+  "rewrites": [
+    { "source": "/", "destination": "/Website/index.html" },
+    { "source": "/install", "destination": "/Website/install/index.html" },
+    { "source": "/install/", "destination": "/Website/install/index.html" },
+    { "source": "/integrations", "destination": "/Website/integrations/index.html" },
+    { "source": "/integrations/", "destination": "/Website/integrations/index.html" },
+    { "source": "/enterprise", "destination": "/Website/enterprise/index.html" },
+    { "source": "/enterprise/", "destination": "/Website/enterprise/index.html" },
+    { "source": "/blog", "destination": "/Website/blog/index.html" },
+    { "source": "/blog/", "destination": "/Website/blog/index.html" },
+    { "source": "/site.css", "destination": "/Website/site.css" },
+    { "source": "/install.ps1", "destination": "/Website/install.ps1" }
+  ]
+}

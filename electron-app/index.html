@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self' data:;"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="A fast, private desktop file organizer for Windows, macOS, and Linux."
+    />
+    <title>Smart File Organizer</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body class="text-slate-100 antialiased selection:bg-emerald-300/30">
+    <div class="pointer-events-none fixed inset-0 overflow-hidden">
+      <div class="ambient absolute -left-32 -top-32 h-96 w-96 rounded-full bg-violet-600/20"></div>
+      <div class="ambient absolute right-0 top-24 h-80 w-80 rounded-full bg-cyan-500/10"></div>
+      <div class="ambient absolute bottom-0 left-1/3 h-72 w-96 rounded-full bg-emerald-500/10"></div>
+    </div>
+
+    <div class="relative flex h-screen min-h-[640px] w-screen min-w-[900px]">
+      <aside class="app-no-drag flex w-[248px] shrink-0 flex-col border-r border-white/[0.07] bg-slate-950/50 px-5 pb-5 pt-12">
+        <div class="mb-10 flex items-center gap-3 px-2">
+          <div class="grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br from-emerald-300 to-cyan-500 text-slate-950 shadow-lg shadow-emerald-500/20">
+            <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 7.5A2.5 2.5 0 0 1 5.5 5H10l2 2h6.5A2.5 2.5 0 0 1 21 9.5v8a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 17.5z"/>
+              <path d="m8 13 2.5 2.5L16 10"/>
+            </svg>
+          </div>
+          <div>
+            <p class="text-sm font-semibold tracking-wide text-white">SMART SORT</p>
+            <p class="text-[11px] text-slate-500">FILE ORGANIZER</p>
+          </div>
+        </div>
+
+        <p class="mb-3 px-3 text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-600">Workspace</p>
+        <nav class="space-y-1">
+          <button id="nav-overview" class="nav-link nav-link-active" type="button" aria-current="page">
+            <span class="nav-icon">⌂</span><span>Overview</span>
+          </button>
+          <button id="nav-activity" class="nav-link" type="button">
+            <span class="nav-icon">◷</span><span>Activity log</span>
+          </button>
+          <button id="nav-rules" class="nav-link" type="button">
+            <span class="nav-icon">⌘</span><span>Custom rules</span>
+          </button>
+        </nav>
+
+        <div class="mt-9">
+          <p class="mb-3 px-3 text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-600">Tools</p>
+          <nav class="space-y-1">
+            <button id="nav-cleaner" class="nav-link" type="button">
+              <span class="nav-icon">✳</span><span>Duplicate cleaner</span>
+            </button>
+            <button id="nav-vault" class="nav-link" type="button">
+              <span class="nav-icon">▣</span><span>Private vault</span>
+            </button>
+          </nav>
+        </div>
+
+        <div class="mt-auto rounded-2xl border border-white/[0.07] bg-white/[0.035] p-4">
+          <div class="mb-2 flex items-center gap-2">
+            <span class="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.8)]"></span>
+            <span class="text-xs font-medium text-slate-200">Your files stay local</span>
+          </div>
+          <p class="text-[11px] leading-5 text-slate-500">Files are organized on this device. Nothing is uploaded.</p>
+        </div>
+      </aside>
+
+      <main class="app-no-drag scrollbar flex min-w-0 flex-1 flex-col overflow-y-auto px-8 pb-6 pt-12 xl:px-12">
+        <div id="dashboard-page" class="contents">
+        <header class="app-drag mb-8 flex shrink-0 items-center justify-between gap-6">
+          <div>
+            <p class="mb-1 text-xs font-medium uppercase tracking-[0.2em] text-emerald-300/75">YOUR FILES, IN ORDER</p>
+            <h1 class="text-3xl font-semibold tracking-tight text-white">
+              Smart <span class="bg-gradient-to-r from-emerald-300 via-cyan-300 to-violet-300 bg-clip-text text-transparent">File Organizer</span>
+            </h1>
+          </div>
+          <div id="app-status" class="flex items-center gap-2 rounded-full border border-emerald-400/15 bg-emerald-400/[0.07] px-3.5 py-2 text-xs font-medium text-emerald-200">
+            <span id="status-dot" class="h-2 w-2 rounded-full bg-emerald-400"></span>
+            <span id="status-text">Ready to organize</span>
+          </div>
+        </header>
+
+        <section class="glass relative mb-6 shrink-0 overflow-hidden rounded-[26px] p-7 shadow-card md:p-9">
+          <div class="pointer-events-none absolute -right-10 -top-24 h-72 w-72 rounded-full bg-emerald-400/[0.08] blur-3xl"></div>
+          <div class="relative grid gap-8 lg:grid-cols-[1fr_0.92fr] lg:items-center">
+            <div>
+              <div class="mb-4 inline-flex items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.04] px-3 py-1.5 text-[11px] font-medium text-slate-300">
+                <span class="text-emerald-300">✦</span> A calmer way to manage files
+              </div>
+              <h2 class="max-w-xl text-3xl font-semibold leading-tight tracking-tight text-white md:text-[38px]">
+                Less clutter.<br />
+                <span class="text-slate-400">More room to think.</span>
+              </h2>
+              <p class="mt-4 max-w-md text-sm leading-6 text-slate-400">
+                Sort downloads and documents into clean folders in seconds. Your files never leave your computer.
+              </p>
+              <div class="mt-7 flex flex-wrap gap-3">
+                <button id="select-folder" class="btn-secondary" type="button">
+                  <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <path d="M3 7.5A2.5 2.5 0 0 1 5.5 5H10l2 2h6.5A2.5 2.5 0 0 1 21 9.5v8a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 17.5z"/>
+                  </svg>
+                  Select folder
+                </button>
+                <button id="organize-now" class="btn-primary" type="button" disabled>
+                  <span>Organize now</span>
+                  <svg viewBox="0 0 24 24" class="h-4 w-4 transition-transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M5 12h14m-6-6 6 6-6 6"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <button id="drop-zone" class="group relative flex min-h-[218px] flex-col items-center justify-center rounded-2xl border border-dashed border-slate-600/70 bg-slate-950/30 px-6 py-7 text-center transition duration-200 hover:border-emerald-300/60 hover:bg-emerald-400/[0.035]" type="button" aria-label="Drop files to organize or click to select a folder">
+              <div class="mb-4 grid h-14 w-14 place-items-center rounded-2xl border border-emerald-300/15 bg-emerald-300/[0.07] text-emerald-200 transition group-hover:scale-105 group-hover:bg-emerald-300/[0.12]">
+                <svg viewBox="0 0 24 24" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.6">
+                  <path d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5"/>
+                  <path d="M5 14v4.5A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5V14"/>
+                </svg>
+              </div>
+              <span class="text-sm font-semibold text-slate-100">Drop files to organize instantly</span>
+              <span class="mt-1.5 text-xs text-slate-500">or click here to choose a folder</span>
+              <span id="drop-hint" class="mt-4 rounded-full bg-white/[0.04] px-3 py-1 text-[10px] text-slate-500">PDF · Images · Audio · Archives · more</span>
+            </button>
+          </div>
+
+          <div class="relative mt-7 flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-white/[0.07] pt-5">
+            <span class="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-500">Working folder</span>
+            <span class="text-slate-700">/</span>
+            <span id="selected-folder" class="min-w-0 flex-1 truncate text-sm text-slate-300">No folder selected</span>
+            <button id="change-folder" class="text-xs font-medium text-emerald-300 transition hover:text-emerald-200" type="button">Change</button>
+          </div>
+        </section>
+
+        <section class="mb-6 shrink-0">
+          <div class="mb-3 flex items-end justify-between">
+            <div>
+              <h3 class="text-sm font-semibold text-slate-100">Quick actions</h3>
+              <p class="mt-1 text-xs text-slate-500">Everything you need, right where you need it.</p>
+            </div>
+            <span class="text-[11px] text-slate-600">4 TOOLS</span>
+          </div>
+          <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+            <button id="action-cleaner" class="tool-card group" type="button">
+              <span class="tool-icon bg-violet-400/10 text-violet-200">✳</span>
+              <span class="mt-4 block text-sm font-semibold text-slate-100">Clean duplicates</span>
+              <span class="mt-1 block text-xs leading-5 text-slate-500">Find duplicates & temporary files</span>
+              <span class="tool-link text-violet-200">Scan folder <span aria-hidden="true">→</span></span>
+            </button>
+            <button id="action-vault" class="tool-card group" type="button">
+              <span class="tool-icon bg-amber-300/10 text-amber-200">▣</span>
+              <span class="mt-4 block text-sm font-semibold text-slate-100">Private vault</span>
+              <span class="mt-1 block text-xs leading-5 text-slate-500">Keep personal items tucked away</span>
+              <span class="tool-link text-amber-200">Open vault <span aria-hidden="true">→</span></span>
+            </button>
+            <button id="action-rules" class="tool-card group" type="button">
+              <span class="tool-icon bg-pink-300/10 text-pink-200">⌘</span>
+              <span class="mt-4 block text-sm font-semibold text-slate-100">Custom rules</span>
+              <span class="mt-1 block text-xs leading-5 text-slate-500">Choose where each type belongs</span>
+              <span class="tool-link text-pink-200">Manage rules <span aria-hidden="true">→</span></span>
+            </button>
+            <button id="action-activity" class="tool-card group" type="button">
+              <span class="tool-icon bg-cyan-300/10 text-cyan-200">◷</span>
+              <span class="mt-4 block text-sm font-semibold text-slate-100">Activity & stats</span>
+              <span class="mt-1 block text-xs leading-5 text-slate-500">See what has been organized</span>
+              <span class="tool-link text-cyan-200">View history <span aria-hidden="true">→</span></span>
+            </button>
+          </div>
+        </section>
+
+        <section class="mb-5 grid shrink-0 gap-3 lg:grid-cols-2">
+          <article class="glass flex items-start gap-4 rounded-2xl p-4">
+            <span class="tool-icon h-10 w-10 shrink-0 bg-sky-300/10 text-sky-200">▧</span>
+            <div class="min-w-0 flex-1">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <h3 class="text-sm font-semibold text-slate-100">Image auto-sort</h3>
+                <button id="auto-sort-toggle" class="mode-button" type="button">Start</button>
+              </div>
+              <p id="auto-sort-status" class="mt-1 line-clamp-2 text-xs leading-5 text-slate-500">Watch new images and sort them into dated folders.</p>
+            </div>
+          </article>
+          <article class="glass flex items-start gap-4 rounded-2xl p-4">
+            <span class="tool-icon h-10 w-10 shrink-0 bg-teal-300/10 text-teal-200">⌁</span>
+            <div class="min-w-0 flex-1">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <h3 class="text-sm font-semibold text-slate-100">Live file watcher</h3>
+                <button id="live-watch-toggle" class="mode-button" type="button">Start</button>
+              </div>
+              <p id="live-watch-status" class="mt-1 line-clamp-2 text-xs leading-5 text-slate-500">Automatically sort new files as they arrive.</p>
+            </div>
+          </article>
+        </section>
+
+        <section class="glass flex min-h-[160px] flex-1 flex-col overflow-hidden rounded-2xl">
+          <div class="flex items-center justify-between border-b border-white/[0.07] px-5 py-3.5">
+            <div class="flex items-center gap-2.5">
+              <span class="grid h-7 w-7 place-items-center rounded-lg bg-white/[0.05] text-xs text-slate-400">›_</span>
+              <div>
+                <h3 class="text-xs font-semibold text-slate-200">Activity console</h3>
+                <p class="mt-0.5 text-[10px] text-slate-600">Live file operations</p>
+              </div>
+            </div>
+            <button id="clear-logs" class="text-[11px] text-slate-500 transition hover:text-slate-300" type="button">Clear logs</button>
+          </div>
+          <div id="activity-log" class="scrollbar min-h-0 flex-1 space-y-2 overflow-y-auto px-5 py-3" aria-live="polite">
+            <div class="log-row">
+              <span class="log-time">--:--:--</span>
+              <span class="log-dot bg-slate-600"></span>
+              <span class="text-slate-500">Ready when you are. Choose a folder to begin.</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-2 border-t border-white/[0.06] px-5 py-2.5">
+            <span class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span>
+            <span id="console-footer" class="text-[10px] text-slate-500">All operations run locally on this device.</span>
+          </div>
+        </section>
+        </div>
+
+        <section id="feature-page" class="hidden min-h-full flex-col">
+          <header class="mb-7 flex shrink-0 items-center justify-between gap-4">
+            <div class="min-w-0">
+              <button id="page-back" class="mb-4 inline-flex items-center gap-2 text-xs font-medium text-slate-400 transition hover:text-emerald-200" type="button">
+                <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8">
+                  <path d="M19 12H5m7 7-7-7 7-7"/>
+                </svg>
+                Back to overview
+              </button>
+              <p class="text-[10px] font-semibold uppercase tracking-[0.2em] text-emerald-300/70">SMART FILE ORGANIZER</p>
+              <h2 id="page-title" class="mt-1 truncate text-2xl font-semibold text-white"></h2>
+              <p id="page-subtitle" class="mt-1 text-sm text-slate-500"></p>
+            </div>
+            <span class="hidden shrink-0 rounded-full border border-emerald-400/15 bg-emerald-400/[0.07] px-3 py-2 text-[11px] font-medium text-emerald-200 sm:inline-flex sm:items-center sm:gap-2">
+              <span class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span>
+              Files stay local
+            </span>
+          </header>
+          <div id="page-content" class="scrollbar min-h-0 flex-1 overflow-y-auto pb-6"></div>
+        </section>
+      </main>
+    </div>
+    <script src="./renderer.js"></script>
+  </body>
+</html>
