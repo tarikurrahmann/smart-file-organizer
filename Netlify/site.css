@@ -1,0 +1,107 @@
+:root {
+  color-scheme: dark;
+  background: #09090b;
+  font-family: Inter, "Segoe UI", sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-width: 320px;
+  overflow-x: clip;
+  background: #09090b;
+}
+
+::selection {
+  background: rgba(110, 231, 194, 0.3);
+}
+
+.ambient {
+  filter: blur(105px);
+}
+
+.grid-glow {
+  background-image:
+    linear-gradient(rgba(148, 163, 184, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148, 163, 184, 0.03) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: linear-gradient(to bottom, black, transparent 90%);
+}
+
+.gradient-text {
+  background: linear-gradient(100deg, #6ee7c2, #67d9ef 54%, #c4b5fd);
+  background-clip: text;
+  color: transparent;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.glass {
+  border: 1px solid rgba(148, 163, 184, 0.13);
+  background: linear-gradient(145deg, rgba(20, 30, 49, 0.76), rgba(13, 20, 35, 0.7));
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+}
+
+.bento-card {
+  border: 1px solid rgba(148, 163, 184, 0.115);
+  background: linear-gradient(145deg, rgba(20, 30, 49, 0.64), rgba(13, 20, 35, 0.55));
+  transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+}
+
+.bento-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(110, 231, 194, 0.24);
+  background: linear-gradient(145deg, rgba(25, 38, 59, 0.78), rgba(15, 23, 40, 0.68));
+}
+
+.button-primary {
+  border: 1px solid rgba(110, 231, 194, 0.6);
+  background: linear-gradient(110deg, #6ee7c2, #67d9ef);
+  box-shadow: 0 12px 38px rgba(45, 212, 191, 0.16);
+  color: #06221f;
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+.button-primary:hover {
+  box-shadow: 0 16px 46px rgba(45, 212, 191, 0.28);
+  transform: translateY(-2px);
+}
+
+.button-secondary {
+  border: 1px solid rgba(148, 163, 184, 0.17);
+  background: rgba(255, 255, 255, 0.03);
+  transition: border-color 160ms ease, background 160ms ease, transform 160ms ease;
+}
+
+.button-secondary:hover {
+  transform: translateY(-2px);
+  border-color: rgba(148, 163, 184, 0.33);
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.page-in {
+  animation: page-in 550ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+@keyframes page-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+a:focus-visible {
+  outline: 2px solid rgba(110, 231, 194, 0.9);
+  outline-offset: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation: none !important;
+    transition-duration: 0.01ms !important;
+  }
+}

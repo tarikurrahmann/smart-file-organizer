@@ -1,0 +1,22 @@
+[build]
+  publish = "."
+
+[[redirects]]
+  from = "/install"
+  to = "/install/"
+  status = 301
+
+[[redirects]]
+  from = "/integrations"
+  to = "/integrations/"
+  status = 301
+
+[[redirects]]
+  from = "/enterprise"
+  to = "/enterprise/"
+  status = 301
+
+[[redirects]]
+  from = "/blog"
+  to = "/blog/"
+  status = 301
