@@ -10,9 +10,9 @@ The site includes the overview, `/install/`, `/integrations/`, `/enterprise/`, a
 
 The packaged Windows downloads are larger than 100 MB each, so they are intentionally not copied into this deploy folder. The website links to GitHub Releases instead. Before publishing, create a GitHub release and upload these exact assets:
 
-- `Smart File Organizer 1.0.0.exe`
-- `Smart File Organizer-1.0.0-win.zip`
-- `Smart File Organizer Setup 1.0.0.exe`
+- `Smart.File.Organizer.1.0.0.exe`
+- `Smart.File.Organizer-1.0.0-win.zip`
+- `Smart.File.Organizer.Setup.1.0.0.exe`
 
 The `install.ps1` download URL uses the latest GitHub release. After the site is deployed, run:
 

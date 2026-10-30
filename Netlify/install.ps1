@@ -1,6 +1,6 @@
 $ErrorActionPreference = "Stop"
 
-$archiveUrl = "https://github.com/tarikurrahmann/smart-file-organizer/releases/latest/download/Smart%20File%20Organizer-1.0.0-win.zip"
+$archiveUrl = "https://github.com/tarikurrahmann/smart-file-organizer/releases/latest/download/Smart.File.Organizer-1.0.0-win.zip"
 $installDirectory = Join-Path $env:LOCALAPPDATA "Programs\Smart File Organizer"
 $archivePath = Join-Path $env:TEMP ("smart-file-organizer-{0}.zip" -f [guid]::NewGuid())
 $executablePath = Join-Path $installDirectory "Smart File Organizer.exe"
