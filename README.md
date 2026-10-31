@@ -8,6 +8,45 @@ Smart File Organizer helps turn a busy folder into a calmer, easier-to-browse sp
 
 ## From a crowded folder to a clear layout
 
+```mermaid
+flowchart TD
+    A["Input<br/>Choose a folder or drop files"] --> B["Organizer<br/>Check file extension and custom rules"]
+    W["Optional live watcher<br/>Wait for new files to finish"] --> B
+    B --> C{"Choose a category"}
+    C --> D["Images"]
+    C --> E["Documents"]
+    C --> F["Videos, Audio, Archives,<br/>Code, Executables, or Others"]
+    D --> G["Move into a category folder<br/>Avoid overwriting existing files"]
+    E --> G
+    F --> G
+    G --> H["Activity history"]
+    H --> I["Undo the latest organization<br/>when needed"]
+
+    J["Duplicate cleaner<br/>Scan and compare file contents"] --> K["Review candidates"]
+    K --> L["Send selected items to<br/>Recycle Bin or Trash"]
+```
+
+```text
+┌───────────────────────────────┐
+│ Input                         │
+│ Choose a folder or drop files │
+└───────────────┬───────────────┘
+                │
+       ┌────────▼─────────┐       ┌─────────────────┐
+       │ File Organizer   │◄──────│ Optional watcher│
+       │ Check type/rules │       │ New files       │
+       └────────┬─────────┘       └─────────────────┘
+                │
+        ┌───────┴────────┐
+        │                │
+  ┌─────▼──────┐   ┌─────▼──────────┐
+  │ Type-based │   │ Activity log   │
+  │ folders    │   │ Review / Undo  │
+  └────────────┘   └────────────────┘
+
+  Duplicate cleaner ──► Review matches ──► System Trash
+```
+
 ### Choose where to begin
 
 Open the desktop app and select a folder—Downloads, Desktop, or another place that needs a reset. Choose **Organize now** to sort regular files directly inside that folder. Existing subfolders stay where they are.
