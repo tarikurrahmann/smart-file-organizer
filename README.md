@@ -1,13 +1,36 @@
 # Smart File Organizer
 
-Smart File Organizer is an open-source desktop app that sorts files into categories, watches folders, finds duplicate files, and keeps a local activity history. Files are processed on your device.
+> **Less clutter. More room to think.**
+>
+> A calmer home for your files: sort the busy folders, keep an eye on new downloads, and stay in control of every change.
 
-## Desktop apps
+[![Windows x64](https://img.shields.io/badge/platform-Windows%20x64-0f766e)](https://github.com/tarikurrahmann/smart-file-organizer/releases)
+[![MIT License](https://img.shields.io/badge/license-MIT-64748b.svg)](LICENSE)
+[![Website](https://img.shields.io/badge/website-live-0e7490)](https://smart-file-org.netlify.app/)
 
-This repository contains two separate desktop implementations:
+Smart File Organizer is an open-source desktop app for organizing files without sending them to a cloud service. Categorize files, watch folders, find exact duplicates, and review or undo recent changes—all on your device.
 
-- **Electron:** Electron UI with Tailwind CSS. JavaScript in the Electron main process handles file operations through a restricted preload bridge.
-- **Python:** Standalone PyQt6 app with its own organizer, watcher, activity, cleanup, and vault modules. Electron does not run or depend on the Python app.
+## What it can do
+
+- **Sort in a click:** Group common file types into Images, Documents, Videos, Audio, Archives, Code, and more.
+- **Watch folders:** Automatically sort new files while the desktop app is running.
+- **Find duplicates:** Compare file contents with SHA-256 hashes and review candidates before cleanup.
+- **Tidy images:** Sort incoming images into dated folders.
+- **Keep a local history:** Review recent activity and undo the latest organization action.
+- **Use the private vault:** Move items into `.private_vault` for separation. This is not encryption or password protection.
+
+Files are handled locally. Duplicate cleanup sends selected items to the operating system Trash/Recycle Bin.
+
+## Choose your desktop app
+
+This repository contains two independent implementations:
+
+| App | Stack | How it works |
+| --- | --- | --- |
+| Electron desktop | Electron, JavaScript, Tailwind CSS | Electron's main process handles file operations through a restricted preload bridge. |
+| Python desktop | Python, PyQt6, Watchdog | A standalone desktop app with its own organizer, watcher, activity, cleanup, and vault modules. |
+
+The Electron app does not invoke or depend on the Python app.
 
 ### Run the Electron app
 
@@ -37,9 +60,9 @@ npm run dist
 
 The build produces a portable EXE, ZIP archive, and NSIS setup installer in `dist/`. The installer can create Desktop and Start Menu shortcuts. The executables are unsigned, so Windows Smart App Control may show a warning.
 
-## Website
+## Website and downloads
 
-The static multi-page website is in `Netlify/` (deployment copy) and `Website/` (source copy). It contains:
+The live multi-page website is [smart-file-org.netlify.app](https://smart-file-org.netlify.app/). Its Netlify-ready files are in `Netlify/`; `Website/` contains the original site source. The pages are:
 
 - `/` — overview
 - `/install/` — downloads, requirements, and quick start
@@ -47,7 +70,7 @@ The static multi-page website is in `Netlify/` (deployment copy) and `Website/` 
 - `/enterprise/` — current team/enterprise limitations
 - `/blog/` — project updates
 
-### Deploy to Netlify
+### Deploy your own copy
 
 Connect this GitHub repository to Netlify and set:
 
@@ -55,7 +78,7 @@ Connect this GitHub repository to Netlify and set:
 - **Build command:** leave empty
 - **Publish directory:** `.`
 
-The site is deployed at <https://smart-file-org.netlify.app/>. Its Netlify configuration is in `Netlify/netlify.toml`.
+The Netlify configuration is in `Netlify/netlify.toml`.
 
 To preview the website locally from the repository root:
 
@@ -65,29 +88,29 @@ python scripts/serve-website.py
 
 Then open <http://127.0.0.1:8765/>.
 
-### Downloads and GitHub Releases
+### Download a release
 
-Download buttons and the PowerShell installer use GitHub Releases because the Windows packages exceed 100 MB and are not included in the Netlify site folder. The `v1.0.0` release must contain these assets with the exact filenames below:
+The Windows builds are larger than 100 MB, so download buttons and the PowerShell installer fetch them from [GitHub Releases](https://github.com/tarikurrahmann/smart-file-organizer/releases). Release assets must keep these exact filenames:
 
 - `Smart.File.Organizer.1.0.0.exe` — portable app
 - `Smart.File.Organizer-1.0.0-win.zip` — ZIP archive
 - `Smart.File.Organizer.Setup.1.0.0.exe` — setup installer
 
-The release links use `/releases/latest/download/`. If downloads fail, confirm that the release is published as the latest release and that the uploaded asset names match exactly.
+If a download fails, check that the release is published as the latest release and that the uploaded asset names match exactly.
 
-To install the ZIP build from PowerShell, review the script first, then run:
+To install the ZIP build from PowerShell, review [`Netlify/install.ps1`](Netlify/install.ps1) first, then run:
 
 ```powershell
 irm https://smart-file-org.netlify.app/install.ps1 | iex
 ```
 
-This runs a remote script that downloads and launches the ZIP build. Only run it if you trust the source. The direct downloads are also available from the website's Install page.
+This runs a remote script that downloads and launches the ZIP build. Only run it if you trust the source. Direct downloads are also available from the website's Install page.
 
 To publish a blog update, edit `Netlify/blog/index.html` and deploy the site again.
 
-## Features and limitations
+## Acknowledgements
 
-The desktop apps provide file categorization, custom extension rules, folder watching, duplicate cleanup, dated image sorting, local activity history, and Undo. Duplicate cleanup sends selected files to the operating system Trash/Recycle Bin. The private vault hides and relocates files into a local folder; it does not encrypt or password-protect them.
+Thanks to **Claude AI** for helping with ideas, writing, and refining parts of this project. The project direction, final decisions, and release are by **Tarikur Rahman**.
 
 ## License
 
