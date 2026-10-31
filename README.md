@@ -108,9 +108,10 @@ This runs a remote script that downloads and launches the ZIP build. Only run it
 
 To publish a blog update, edit `Netlify/blog/index.html` and deploy the site again.
 
-## Acknowledgements
+## [Contributors](https://github.com/tarikurrahmann/smart-file-organizer/graphs/contributors)
 
-Thanks to **Claude AI** for helping with ideas, writing, and refining parts of this project. The project direction, final decisions, and release are by **Tarikur Rahman**.
+- [Tarikur Rahman](https://github.com/tarikurrahmann) — Creator and maintainer.
+- [Claude AI](https://claude.ai/) — Assisted with project ideas, writing, and refinement.
 
 ## License
 
