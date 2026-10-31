@@ -8,29 +8,82 @@
 [![MIT License](https://img.shields.io/badge/license-MIT-64748b.svg)](LICENSE)
 [![Website](https://img.shields.io/badge/website-live-0e7490)](https://smart-file-org.netlify.app/)
 
-Smart File Organizer is an open-source desktop app for organizing files without sending them to a cloud service. Categorize files, watch folders, find exact duplicates, and review or undo recent changes—all on your device.
+Smart File Organizer turns a crowded folder into a set of clear, type-based folders. Choose when to organize, let the app watch for new files, and review changes afterward. The desktop apps perform file operations on your computer; they do not upload your files to a cloud service.
 
-## What it can do
+## How the app works
 
-- **Sort in a click:** Group common file types into Images, Documents, Videos, Audio, Archives, Code, and more.
-- **Watch folders:** Automatically sort new files while the desktop app is running.
-- **Find duplicates:** Compare file contents with SHA-256 hashes and review candidates before cleanup.
-- **Tidy images:** Sort incoming images into dated folders.
-- **Keep a local history:** Review recent activity and undo the latest organization action.
-- **Use the private vault:** Move items into `.private_vault` for separation. This is not encryption or password protection.
+### 1. Choose what to organize
 
-Files are handled locally. Duplicate cleanup sends selected items to the operating system Trash/Recycle Bin.
+Open the desktop app and select a folder, such as Downloads or Desktop. You can organize the files in that folder with one click, or drag individual files into the app. Dragged files are organized beside their original location.
 
-## Choose your desktop app
+For a folder-wide organization, the app processes regular files directly inside the selected folder; it does not sweep through existing subfolders. The duplicate scanner is different: it searches through the selected folder and its subfolders.
+
+### 2. The app decides where each file belongs
+
+The organizer reads each file's extension, such as `.jpg`, `.pdf`, or `.mp4`, and matches it to a category:
+
+| File examples | Destination folder |
+| --- | --- |
+| `.jpg`, `.png`, `.webp` | `Images` |
+| `.pdf`, `.docx`, `.txt`, `.csv` | `Documents` |
+| `.mp4`, `.mkv`, `.mov` | `Videos` |
+| `.mp3`, `.wav`, `.flac` | `Audio` |
+| `.zip`, `.7z`, `.tar` | `Archives` |
+| `.py`, `.js`, `.html`, `.css` | `Code` |
+| `.exe`, `.msi` | `Executables` |
+| Unknown extensions | `Others` |
+
+Custom extension rules take priority over the built-in categories. For example, you can route `.psd` files to a folder named `Design`. If a destination folder does not exist, the app creates it beside the files being organized.
+
+The organizer avoids overwriting existing files. When a file with the same name is already in the destination, it gives the incoming file a numbered name instead. The app processes regular files, skips folders during normal sorting, and refuses symbolic links.
+
+### 3. Follow new files automatically (optional)
+
+If you turn on the live folder watcher, the app watches the selected folder while the desktop app is running. When a new file arrives, the watcher waits for its size and modification time to stop changing before organizing it. This helps avoid moving a download while it is still being written. Known partial-download and temporary-file extensions are ignored by the watcher.
+
+The image auto-sort mode watches for new images and places them in a dated structure, for example:
+
+```text
+Screenshots_2026/
+└── 2026-10-31/
+    └── image.png
+```
+
+Choose the destination root when starting image auto-sort. Watchers are optional, run locally, and stop when you stop them or close the desktop app.
+
+### 4. Review duplicates and temporary files
+
+The cleanup scanner searches the selected folder tree and looks for:
+
+- **Exact duplicates:** Files with the same size are compared using SHA-256 content hashes. Matching hashes identify byte-for-byte copies; files are not treated as duplicates based on their names alone.
+- **Likely temporary files:** `.tmp`, `.temp`, `.cache`, editor backup files ending in `~`, and Office lock files beginning with `~$`.
+
+The scan shows candidates and their reasons so you can choose what to remove. Nothing is deleted just because a scan found it. When you confirm cleanup, selected files are sent to the operating system's Recycle Bin/Trash, where they can generally be reviewed or restored using the operating system.
+
+### 5. Keep items out of sight with the private vault
+
+Select files or folders and move them into `.private_vault` inside the chosen folder. The app can list vault contents and move selected items back. On Windows, the vault folder is marked hidden.
+
+**The vault is not a security feature:** it does not encrypt files, require a password, or prevent another person or application from accessing them. Use device-level encryption for sensitive data.
+
+### 6. Check activity and undo
+
+After organizing, the app records each move locally with its source, destination, category, and time. The activity view summarizes recent work and category totals. Undo reverses the latest organization action by moving those files back to their original locations.
+
+Undo checks for conflicts before restoring a file. If the original path is already occupied or an organized file is missing, it reports the issue rather than silently overwriting another file. Stop an active watcher before manually organizing or undoing an action.
+
+## The two desktop apps
 
 This repository contains two independent implementations:
 
 | App | Stack | How it works |
 | --- | --- | --- |
-| Electron desktop | Electron, JavaScript, Tailwind CSS | Electron's main process handles file operations through a restricted preload bridge. |
+| Electron desktop | Electron, JavaScript, Tailwind CSS | The interface asks Electron's main process to perform approved file operations through a restricted preload bridge. |
 | Python desktop | Python, PyQt6, Watchdog | A standalone desktop app with its own organizer, watcher, activity, cleanup, and vault modules. |
 
-The Electron app does not invoke or depend on the Python app.
+The Electron app does not invoke or depend on the Python app. Both are desktop applications; the hosted website is a landing page and does not organize files in the browser.
+
+## Run the desktop apps
 
 ### Run the Electron app
 
@@ -107,11 +160,6 @@ irm https://smart-file-org.netlify.app/install.ps1 | iex
 This runs a remote script that downloads and launches the ZIP build. Only run it if you trust the source. Direct downloads are also available from the website's Install page.
 
 To publish a blog update, edit `Netlify/blog/index.html` and deploy the site again.
-
-## [Contributors](https://github.com/tarikurrahmann/smart-file-organizer/graphs/contributors)
-
-- [Tarikur Rahman](https://github.com/tarikurrahmann) — Creator and maintainer.
-- [Claude AI](https://claude.ai/) — Assisted with project ideas, writing, and refinement.
 
 ## License
 
